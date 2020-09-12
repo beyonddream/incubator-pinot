@@ -230,7 +230,10 @@ public class HadoopSegmentGenerationJobRunner extends Configured implements Inge
       if (hadoopTokenFileLocation != null) {
         jobConf.set("mapreduce.job.credentials.binary", hadoopTokenFileLocation);
       }
-      jobConf.setInt(JobContext.NUM_MAPS, numDataFiles);
+
+      int jobParallelism =
+          (_spec.getSegmentCreationJobParallelism() > 0) ? _spec.getSegmentCreationJobParallelism() : numDataFiles;
+      jobConf.setInt(JobContext.NUM_MAPS, jobParallelism);
 
       // Pinot plugins are necessary to launch Pinot ingestion job from every mapper.
       // In order to ensure pinot plugins would be loaded to each worker, this method
